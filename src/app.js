@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
 })
 
 //Routes
-import { airMonitoringRouter } from './routes/airMonitoring.route.js'
+import airMonitoringRouter from './routes/airMonitoring.route.js'
 
 app.use('/api', airMonitoringRouter);
 
