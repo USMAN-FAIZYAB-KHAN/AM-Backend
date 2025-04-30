@@ -1,21 +1,3 @@
-import dotenv from "dotenv";
-import connection from "../src/db/dbConnection.js";
-import { app } from "../src/app.js";
-// Load environment variables
-dotenv.config({
-  path: "./.env",
-});
+import app from "../src/app.js";  // Import your Express app from src/index.js
 
-// Use the port from the environment variable or default to 3000
-const port = process.env.PORT || 3000;
-
-connection()
-  .then(() => {
-    app.listen(port,() => {
-      console.log(`Server running at ${port}`);
-    });
-  })
-  .catch((err) => console.log("MongoDB connection failed", err));
-
-
-  export default app;
+export default app;  // Export the app for Vercel's serverless function handler
