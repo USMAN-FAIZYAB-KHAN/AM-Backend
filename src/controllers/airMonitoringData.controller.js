@@ -345,22 +345,17 @@ const uploadBinFile = (req, res) => {
 };
 
 const getBinFileURL = (req, res) => {
-  // const uploadDir = path.join(process.cwd(), "public", "temp");
-  const uploadDir = '/tmp';
-
-  fs.readdir(uploadDir, (err, files) => {
-    if (err) {
-      return res
-        .status(500)
-        .json({ message: "Failed to read upload directory" });
-    }
-
-    const firmwareFile = files.filter((f) => f.endsWith(".bin"))[0];
-
-    if (firmwareFile) {
-      const encodedFilename = encodeURIComponent(firmwareFile);
-      const firmwareUrl = `${req.protocol}://${req.get("host")}/temp/${encodedFilename}`;
-
+    const firmwareDir = "/tmp";
+  
+    try {
+      const files = fs.readdirSync(firmwareDir);
+      const firmwareFile = files.find(file => file.endsWith(".ino.bin"));
+  
+      if (!firmwareFile) {
+        return res.status(404).json({ message: "No .ino.bin firmware file found" });
+      }
+  
+      const firmwareUrl = `/firmware/${firmwareFile}`; // adjust this depending on how you're serving static files
       return res
         .status(200)
         .json(
@@ -370,13 +365,10 @@ const getBinFileURL = (req, res) => {
             "Firmware file available"
           )
         );
-    } else {
-      return res
-        .status(404)
-        .json(new ApiResponse(404, null, "No firmware file found"));
+    } catch (error) {
+      return res.status(500).json({ message: "Error reading firmware directory", error: error.message });
     }
-  });
-};
+  };
 
 const deleteBinFile = asyncHandler(async (req, res) => {
   // const uploadDir = path.join(process.cwd(), "public", "temp");
