@@ -10,42 +10,32 @@ import fs from "fs";
 // @route   GET /api/air-monitoring/get-air-data
 // @access  Public
 const getAllAirData = asyncHandler(async (req, res) => {
-//   const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Karachi" }));
-//   const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Karachi" }));
+  const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-//   const airData = await AirData.find({
-//     timestamp: { $gte: twentyFourHoursAgo },
-//   })
-//     .sort({ timestamp: -1 })
-//     .limit(1000)
-//     .setOptions({ allowDiskUse: true });
+  const airData = await AirData.find({
+    timestamp: { $gte: twentyFourHoursAgo },
+  })
+    .sort({ timestamp: -1 })
+    .limit(1000)
+    .setOptions({ allowDiskUse: true });
 
-//   if (!airData || airData.length === 0) {
-//     console.log("No data found");
-//     return res
-//       .status(404)
-//       .json(new ApiResponse(404, null, "No data found for the last 24 hours"));
-//   }
+  if (!airData || airData.length === 0) {
+    console.log("No data found");
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "No data found for the last 24 hours"));
+  }
 
-//   return res
-//     .status(200)
-//     .json(
-//       new ApiResponse(
-//         200,
-//         airData,
-//         "Air Monitoring data from last 24 hours fetched successfully"
-//       )
-//     );
-
-return res
-        .status(200)
-        .json(
-        new ApiResponse(
-            200,
-            {},
-            "Air Monitoring data from last 24 hours fetched successfully"
-        )
-        );
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        airData,
+        "Air Monitoring data from last 24 hours fetched successfully"
+      )
+    );
 });
 
 // @desc    Add air monitoring data
