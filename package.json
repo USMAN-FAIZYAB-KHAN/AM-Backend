@@ -1,0 +1,13 @@
+{
+    "name": "vercel-express-api",
+    "version": "1.0.0",
+    "type": "module",
+    "main": "api/index.js",
+    "scripts": {
+      "dev": "vercel dev"
+    },
+    "dependencies": {
+      "express": "^4.18.2"
+    }
+  }
+  
