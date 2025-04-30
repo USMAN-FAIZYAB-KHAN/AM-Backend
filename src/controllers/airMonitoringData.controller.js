@@ -344,60 +344,49 @@ const uploadBinFile = (req, res) => {
     .json(new ApiResponse(201, {}, "File uploaded successfully"));
 };
 
-const getBinFileURL = (req, res) => {
-    const firmwareDir = "/tmp";
-  
-    try {
-      const files = fs.readdirSync(firmwareDir);
-      const firmwareFile = files.find(file => file.endsWith(".ino.bin"));
-  
-      if (!firmwareFile) {
-        return res.status(404).json({ message: "No .ino.bin firmware file found" });
+const getBinFile = (req, res) => {
+  const firmwareDir = '/tmp';
+
+  try {
+    const files = fs.readdirSync(firmwareDir);
+    const firmwareFile = files.find(file => file.endsWith('.ino.bin'));
+
+    if (!firmwareFile) {
+      return res
+        .status(404)
+        .json(new ApiResponse(404, null, 'No .ino.bin firmware file found'));
+    }
+
+    const filePath = path.join(firmwareDir, firmwareFile);
+    console.log('Sending file:', filePath);
+
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Disposition', `attachment; filename="${firmwareFile}"`);
+
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error('Error sending file:', err);
+        return res
+          .status(500)
+          .json(new ApiResponse(500, null, 'Error sending firmware file'));
       }
-  
-      const firmwareUrl = `/firmware/${firmwareFile}`; // adjust this depending on how you're serving static files
-      return res
-        .status(200)
-        .json(
-          new ApiResponse(
-            200,
-            { available: true, url: firmwareUrl },
-            "Firmware file available"
-          )
-        );
-    } catch (error) {
-      return res.status(500).json({ message: "Error reading firmware directory", error: error.message });
-    }
-  };
 
-const deleteBinFile = asyncHandler(async (req, res) => {
-  // const uploadDir = path.join(process.cwd(), "public", "temp");
-  const uploadDir = '/tmp';
-
-  fs.readdir(uploadDir, (err, files) => {
-    if (err) {
-      console.error("Failed to read upload directory:", err);
-      return res
-        .status(500)
-        .json(new ApiResponse(500, {}, "Failed to read upload directory"));
-    }
-
-    // Filter and delete previous .bin files
-    files
-      .filter((f) => f.endsWith(".bin")) // Delete all .bin files
-      .forEach((f) => {
-        fs.unlink(path.join(uploadDir, f), (err) => {
-          if (err) {
-            console.error(`Failed to delete file ${f}:`, err);
-          }
-        });
+      fs.unlink(filePath, (unlinkErr) => {
+        if (unlinkErr) {
+          console.error('Error deleting file:', unlinkErr);
+        } else {
+          console.log('Firmware file deleted:', firmwareFile);
+        }
       });
+    });
 
+  } catch (error) {
+    console.error('Error in getBinFile:', error);
     return res
-      .status(200)
-      .json(new ApiResponse(200, {}, "Bin files deleted successfully"));
-  });
-});
+      .status(500)
+      .json(new ApiResponse(500, null, 'Internal server error'));
+  }
+};
 
 export {
   getAllAirData,
@@ -407,7 +396,6 @@ export {
   getHalfHourlyAverages,
   saveSensorLocation,
   uploadBinFile,
-  getBinFileURL,
-  deleteBinFile,
+  getBinFile,
   sendMicroControllerLocation,
 };
