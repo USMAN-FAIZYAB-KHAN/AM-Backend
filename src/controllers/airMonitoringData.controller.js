@@ -161,7 +161,7 @@ const getAirDataStats = asyncHandler(async (req, res) => {
 
   const buildStats = (type) => {
     const values = airData.map((entry) => parseFloat(entry[type]));
-    const current = values[values.length - 1];
+    const current = values[0];
     const highest = Math.max(...values);
     const lowest = Math.min(...values);
 
