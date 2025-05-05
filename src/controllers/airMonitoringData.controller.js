@@ -148,7 +148,7 @@ const getMonthlyAverages = asyncHandler(async (req, res) => {
 const getAirDataStats = asyncHandler(async (req, res) => {
   const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
   const airData = await AirData.find({
-    timestamp: { $gte: new Date("2024-12-31T00:00:00.000Z") },
+    timestamp: { $gte: twentyFourHoursAgo },
   })
     .sort({ timestamp: -1 })
     .limit(1000)
