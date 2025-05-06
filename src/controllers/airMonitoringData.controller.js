@@ -43,7 +43,12 @@ const getAllAirData = asyncHandler(async (req, res) => {
 // @access  Public
 const addAirData = asyncHandler(async (req, res) => {
   const { temperature, humidity, dust } = req.body;
-  if (!temperature || !humidity || !dust) {
+  if (
+    temperature === undefined || temperature === null ||
+    humidity === undefined || humidity === null ||
+    dust === undefined || dust === null
+  )
+  {
     return res
       .status(400)
       .json(new ApiResponse(400, req.body, "Please provide all required fields"));
