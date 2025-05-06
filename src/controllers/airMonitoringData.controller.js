@@ -46,7 +46,7 @@ const addAirData = asyncHandler(async (req, res) => {
   if (!temperature || !humidity || !dust) {
     return res
       .status(400)
-      .json(new ApiResponse(400, null, "Please provide all required fields"));
+      .json(new ApiResponse(400, req.body, "Please provide all required fields"));
   }
   const airData = await AirData(req.body);
   await airData.save();
